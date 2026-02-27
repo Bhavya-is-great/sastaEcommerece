@@ -254,19 +254,16 @@ hamburger.addEventListener('click', () => {
     navbar.classList.toggle('open');
 });
 
-products.forEach((elem, idx) => {
-    let card = document.createElement('div');
-    card.classList.add('card');
-    card.id = idx;
-    let wish = wishlist.find((elem) => {
-        return elem.id == idx;
-    });
+function renderCart() {
+    cards.innerHTML = "";
+    cart.forEach((elem, idx) => {
+        let card = document.createElement('div');
+        card.classList.add('card');
+        card.id = idx;
+        let wish = wishlist.find((item) => item.id == elem.id);
+        let cartinc = cart.find((item) => item.id == elem.id);
 
-    let cartinc = cart.find((elem) => {
-        return elem.id == idx;
-    });
-
-    card.innerHTML = `
+        card.innerHTML = `
                 <div class="prodImg">
                     <img src="${elem.image}" alt="Product Image">
                 </div>
@@ -278,44 +275,48 @@ products.forEach((elem, idx) => {
                         <div class="newPrice">$${elem.newPrice}</div>
                     </div>
                 </div>
-                <div onClick="cartFunc(${idx})" class="cart">
+                <div onClick="cartFunc(${elem.id})" class="cart">
                     <i class="${cartinc == undefined ? 'ri-shopping-cart-2-line' : 'ri-shopping-cart-2-fill'}"></i>
                     <!-- <i class="ri-shopping-cart-2-fill"></i> -->
                 </div>
-                <div onClick="wishlistFunc(${idx})" class="wishlist">
+                <div onClick="wishlistFunc(${elem.id})" class="wishlist">
                     <i class="${wish == undefined ? 'ri-poker-hearts-line' : 'ri-poker-hearts-fill'}"></i>
                     <!-- <i class="ri-poker-hearts-fill"></i> -->
                 </div>
     `;
 
-    cards.appendChild(card);
-});
+        cards.appendChild(card);
+    });
+}
+
+renderCart();
 
 function cartFunc(idx) {
     let item = cart.find((elem) => {
         return elem.id == idx;
     });
+    let removePos;
+    for (let i = 0; i < cart.length; i++) {
+        if (cart[i].id == idx) {
+            removePos = i;
+            break;
+        }
+    };
 
     if (item == undefined) {
         cart.push(products[idx])
-        let currentCard = document.querySelectorAll('.cart')[idx];
+        let currentCard = document.querySelectorAll('.cart')[removePos];
         currentCard.children[0].classList.add('ri-shopping-cart-2-fill');
         currentCard.children[0].classList.remove('ri-shopping-cart-2-line');
     } else {
-        let removePos;
-        for (let i = 0; i < cart.length; i++) {
-            if (cart[i].id == idx) {
-                removePos = i;
-                break;
-            }
-        };
 
         cart.splice(removePos, 1);
-        let currentCard = document.querySelectorAll('.cart')[idx];
+        let currentCard = document.querySelectorAll('.cart')[removePos];
         currentCard.children[0].classList.remove('ri-shopping-cart-2-fill');
         currentCard.children[0].classList.add('ri-shopping-cart-2-line');
     }
 
+    renderCart();
     saveToStorage();
 }
 
@@ -323,28 +324,29 @@ function wishlistFunc(idx) {
     let item = wishlist.find((elem) => {
         return elem.id == idx;
     });
+    let removePos;
+    for (let i = 0; i < wishlist.length; i++) {
+        if (wishlist[i].id == idx) {
+            removePos = i;
+            break;
+        }
+    };
 
     if (item == undefined) {
         wishlist.push(products[idx])
-        let currentCard = document.querySelectorAll('.wishlist')[idx];
-        currentCard.children[0].classList.add('ri-poker-hearts-fill');
-        currentCard.children[0].classList.remove('ri-poker-hearts-line');
+        // let currentCard = document.querySelectorAll('.wishlist')[removePos];
+        // currentCard.children[0].classList.add('ri-poker-hearts-fill');
+        // currentCard.children[0].classList.remove('ri-poker-hearts-line');
     } else {
-        let removePos;
-        for (let i = 0; i < wishlist.length; i++) {
-            if (wishlist[i].id == idx) {
-                removePos = i;
-                break;
-            }
-        };
 
         wishlist.splice(removePos, 1);
-        let currentCard = document.querySelectorAll('.wishlist')[idx];
-        currentCard.children[0].classList.remove('ri-poker-hearts-fill');
-        currentCard.children[0].classList.add('ri-poker-hearts-line');
+        // let currentCard = document.querySelectorAll('.wishlist')[removePos];
+        // currentCard.children[0].classList.remove('ri-poker-hearts-fill');
+        // currentCard.children[0].classList.add('ri-poker-hearts-line');
     }
 
     saveToStorage();
+    renderCart();
 }
 
 function saveToStorage() {

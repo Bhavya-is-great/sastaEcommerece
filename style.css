@@ -52,6 +52,12 @@ nav {
     position: relative;
 }
 
+.links .page a,
+.details .detail a {
+    text-decoration: none;
+    color: black;
+}
+
 .links .page::before,
 .details .detail::before {
     content: '';
@@ -251,7 +257,7 @@ nav {
 .cards {
     padding: 3rem;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, 280px);
     gap: 3rem;
-    width: 100%;
+    justify-content: center;
 }
